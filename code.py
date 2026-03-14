@@ -131,16 +131,11 @@ def main():
         print("Ошибка ввода")
         return
 
-    # Создаём функцию
     try:
         namespace = {'np': np}
         namespace.update(math.__dict__)
-        
-        # Создаём временную функцию для проверки
         test_f = lambda x_val: eval(expr, {'x': x_val, **namespace})
         test_val = test_f(a)
-        
-        # Если проверка прошла, создаём окончательную функцию
         f = lambda x_val: eval(expr, {'x': x_val, **namespace})
         
     except Exception as e:
@@ -148,7 +143,6 @@ def main():
         print("Подсказка: используйте sin(x), cos(x), exp(x), sqrt(x) и т.д.")
         return
 
-    # Выбор метода (этой части не хватало!)
     print("\nВыберите метод:")
     print("1 - Средние прямоугольники")
     print("2 - Трапеции")
@@ -168,8 +162,7 @@ def main():
         return
     
     method_name, method_func, order = methods[method_choice]
-    
-    # Вычисляем интеграл
+
     result = method_func(f, a, b, n)
     if isinstance(result, str):
         print(result)
@@ -177,7 +170,6 @@ def main():
     
     print(f"\nПриближённое значение интеграла: {result:.10f}")
 
-    # Оценка погрешности по Рунге
     error, richardson = runge_error(f, a, b, n, method_func, order)
     if error is not None:
         print(f"Оценка погрешности (Рунге): {error:.2e}")
@@ -189,4 +181,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
