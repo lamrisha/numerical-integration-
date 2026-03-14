@@ -120,7 +120,7 @@ def plot_function(f, a, b, n, method_name):
     plt.show()
 
 def main():
-    print("Введите функцию от x используйте math")
+    print("Введите функцию от x (можно использовать sin, cos, exp, sqrt и т.д.)")
     expr = input("f(x) = ")
 
     try:
@@ -131,38 +131,50 @@ def main():
         print("Ошибка ввода")
         return
 
-    # Создаём функцию после ввода a, чтобы проверить в допустимой точке
+    # Создаём функцию
     try:
-        f = lambda x: eval(expr, {'x': x, 'math': math, 'np': np})
-        test_val = f(a)  # проверяем в нижнем пределе
+        namespace = {'np': np}
+        namespace.update(math.__dict__)
+        
+        # Создаём временную функцию для проверки
+        test_f = lambda x_val: eval(expr, {'x': x_val, **namespace})
+        test_val = test_f(a)
+        
+        # Если проверка прошла, создаём окончательную функцию
+        f = lambda x_val: eval(expr, {'x': x_val, **namespace})
+        
     except Exception as e:
         print(f"Ошибка в выражении при x={a}: {e}")
+        print("Подсказка: используйте sin(x), cos(x), exp(x), sqrt(x) и т.д.")
         return
 
+    # Выбор метода (этой части не хватало!)
     print("\nВыберите метод:")
     print("1 - Средние прямоугольники")
     print("2 - Трапеции")
     print("3 - Симпсон")
     print("4 - Трёх восьмых")
     method_choice = input("Ваш выбор (1-4): ")
-
+    
     methods = {
         '1': ('rectangle', rectangle, 2),
         '2': ('trapezoib', trapezoib, 2),
         '3': ('Simpson', Simpson, 4),
         '4': ('three_eight', three_eight, 4)
     }
-
+    
     if method_choice not in methods:
         print("Неверный выбор метода")
         return
-
+    
     method_name, method_func, order = methods[method_choice]
+    
+    # Вычисляем интеграл
     result = method_func(f, a, b, n)
     if isinstance(result, str):
         print(result)
         return
-
+    
     print(f"\nПриближённое значение интеграла: {result:.10f}")
 
     # Оценка погрешности по Рунге
@@ -177,3 +189,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
